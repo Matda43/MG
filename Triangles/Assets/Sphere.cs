@@ -9,7 +9,7 @@ public class Sphere
     private int nbParallel;
     private int nbMeridian;
 
-    private float teta;
+    private float theta;
     private float phi;
     private Vector3[] points;
     private int[] triangles;
@@ -21,7 +21,7 @@ public class Sphere
         this.nbParallel = nbParallel;
         this.nbMeridian = nbMeridian;
 
-        this.teta = 2f * Mathf.PI / this.nbMeridian;
+        this.theta = 2f * Mathf.PI / this.nbMeridian;
         this.phi = 1f * Mathf.PI / this.nbParallel;
         this.points = makePoints();
         this.triangles = makeTriangles();
@@ -29,31 +29,26 @@ public class Sphere
 
     public Vector3[] makePoints()
     {
-        Vector3[] points = new Vector3[nbMeridian * nbParallel];
-        float teta_current = 0;
+        Vector3[] points = new Vector3[nbMeridian * nbParallel + 2];
+        float theta_current = 0;
         float phi_current = phi/2;
         for (int y = 0; y < nbParallel; y++)
         {
             for (int x = 0; x < nbMeridian; x++)
             {
-                Vector3 point = new Vector3(center.x + radius * Mathf.Sin(phi_current) * Mathf.Cos(teta_current), center.y + radius * Mathf.Cos(phi_current), center.z + radius * Mathf.Sin(phi_current) * Mathf.Sin(teta_current));
-
-                GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                g.transform.position = point;
-                
-                teta_current += teta;
+                Vector3 point = new Vector3(center.x + radius * Mathf.Sin(phi_current) * Mathf.Cos(theta_current), center.y + radius * Mathf.Cos(phi_current), center.z + radius * Mathf.Sin(phi_current) * Mathf.Sin(theta_current));
+                theta_current += theta;
                 points[y * nbMeridian + x] = point;
                 //Debug.Log(point);
             }
             phi_current += phi;
         }
 
-        /*
-        Vector3 bottom = new Vector3(center.x, center.y, center.z);
-        Vector3 top = new Vector3(center.x, center.y + height * pasY, center.z);
-        points[(height + 1) * nbMeridian] = bottom;
-        points[(height + 1) * nbMeridian + 1] = top;
-        */
+        Vector3 bottom = new Vector3(center.x, center.y + radius * Mathf.Cos(0), center.z);
+        Vector3 top = new Vector3(center.x, center.y - radius * Mathf.Cos(0), center.z);
+        points[nbParallel * nbMeridian] = bottom;
+        points[nbParallel * nbMeridian + 1] = top;
+        
         return points;
     }
 
@@ -61,10 +56,10 @@ public class Sphere
     {
         int nbSquares = nbMeridian * nbParallel;
         int nbTriangles = nbSquares * 2;
-        int[] triangles = new int[nbTriangles * 3];
+        int[] triangles = new int[nbTriangles * 3 + 2 * nbMeridian * 3];
 
         int inc = 0;
-        for (int y = 0; y < nbParallel; y++)
+        for (int y = 0; y < nbParallel-1; y++)
         {
             for (int x = 0; x < nbMeridian; x++)
             {
@@ -99,6 +94,27 @@ public class Sphere
                 inc = inc + 6;
             }
         }
+
+        //Bottom
+        for (int i = 0; i < nbMeridian; i++)
+        {
+            triangles[inc + 0] = nbParallel * nbMeridian;
+            triangles[inc + 1] = (i + 1) % nbMeridian;
+            triangles[inc + 2] = i;
+            //Debug.Log(triangles[inc] + "," + triangles[inc + 1] + "," + triangles[inc + 2]);
+            inc = inc + 3;
+        }
+
+        //Top
+        for (int i = 0; i < nbMeridian; i++)
+        {
+            triangles[inc + 0] = ((nbParallel-1) * nbMeridian + i);
+            triangles[inc + 1] = ((nbParallel-1) * nbMeridian) + ((i + 1) % nbMeridian);
+            triangles[inc + 2] = nbParallel * nbMeridian + 1;
+            //Debug.Log(triangles[inc] + "," + triangles[inc + 1] + "," + triangles[inc + 2]);
+            inc = inc + 3;
+        }
+
         return triangles;
     }
 

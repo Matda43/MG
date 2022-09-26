@@ -20,7 +20,7 @@ public class Gen_Sphere : MonoBehaviour
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
-        Sphere sphere = new Sphere(new Vector3(0, 0, 0), radius, nbParallel, nbMeridian);
+        Sphere sphere = new Sphere(new Vector3(-2, -8, -8), radius, nbParallel, nbMeridian);
 
         if (debug)
         {
