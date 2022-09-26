@@ -2,18 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gen_Cylinder : MonoBehaviour
+public class Gen_Sphere : MonoBehaviour
 {
     public Material mat;
     public float radius;
-    public int height;
-    public float pasY;
+    public int nbParallel;
     public int nbMeridian;
     public bool debug;
 
     void Start()
     {
-        if (radius <= 0 || height <= 0 || pasY <= 0 || nbMeridian <= 0)
+        if (radius <= 0 || nbParallel <= 0 || nbMeridian <= 0)
         {
             return;
         }
@@ -21,17 +20,17 @@ public class Gen_Cylinder : MonoBehaviour
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
-        Cylinder cylinder = new Cylinder(new Vector3(15, 0, 0), radius, height, pasY, nbMeridian);
+        Sphere sphere = new Sphere(new Vector3(0, 0, 0), radius, nbParallel, nbMeridian);
 
         if (debug)
         {
-            Debug.Log("Cylinder informations : Radius = " + radius + " | Height = " + height + " | Nb Meridian = " + nbMeridian + " | Nb points = " + cylinder.getPoints().Length);
+            Debug.Log("Cylinder informations : Radius = " + radius + " | NbParallel = " + nbParallel + " | Nb Meridian = " + nbMeridian + " | Nb points = " + sphere.getPoints().Length);
         }
 
         Mesh msh = new Mesh();
 
-        msh.vertices = cylinder.getPoints();
-        msh.triangles = cylinder.getTriangles();
+        msh.vertices = sphere.getPoints();
+        msh.triangles = sphere.getTriangles();
 
         gameObject.GetComponent<MeshFilter>().mesh = msh;
         gameObject.GetComponent<MeshRenderer>().material = mat;
