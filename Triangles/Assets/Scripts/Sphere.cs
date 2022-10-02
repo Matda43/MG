@@ -54,7 +54,7 @@ public class Sphere
 
     int[] makeTriangles()
     {
-        int nbSquares = nbMeridian * nbParallel;
+        int nbSquares = nbMeridian * (nbParallel-1);
         int nbTriangles = nbSquares * 2;
         int[] triangles = new int[nbTriangles * 3 + 2 * nbMeridian * 3];
 

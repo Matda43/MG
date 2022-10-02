@@ -1,22 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Gen_Mesh;
 
 public class Gen_Sphere : MonoBehaviour
 {
     public Material mat;
+
+    [Range(1f, 100f)]
     public float radius;
+
+    [Range(1, 100)]
     public int nbParallel;
+
+    [Range(1, 100)]
     public int nbMeridian;
+
     public bool debug;
+    public bool save = false;
 
     void Start()
     {
-        if (radius <= 0 || nbParallel <= 0 || nbMeridian <= 0)
-        {
-            return;
-        }
-
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
@@ -35,5 +39,10 @@ public class Gen_Sphere : MonoBehaviour
         gameObject.GetComponent<MeshFilter>().mesh = msh;
         gameObject.GetComponent<MeshRenderer>().material = mat;
 
+        if (save)
+        {
+            SMesh s = new SMesh();
+            s.writer("Assets/Models/sphere.off", sphere.getPoints(), sphere.getTriangles());
+        }
     }
 }

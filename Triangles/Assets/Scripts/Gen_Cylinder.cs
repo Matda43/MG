@@ -5,19 +5,24 @@ using UnityEngine;
 public class Gen_Cylinder : MonoBehaviour
 {
     public Material mat;
+    
+    [Range(1f, 100f)]
     public float radius;
+
+    [Range(1, 100)]
     public int height;
+
+    [Range(1f, 100f)]
     public float pasY;
+
+    [Range(3, 100)]
     public int nbMeridian;
+
     public bool debug;
+    public bool save = false;
 
     void Start()
     {
-        if (radius <= 0 || height <= 0 || pasY <= 0 || nbMeridian <= 0)
-        {
-            return;
-        }
-
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
@@ -36,5 +41,10 @@ public class Gen_Cylinder : MonoBehaviour
         gameObject.GetComponent<MeshFilter>().mesh = msh;
         gameObject.GetComponent<MeshRenderer>().material = mat;
 
+        if (save)
+        {
+            SMesh s = new SMesh();
+            s.writer("Assets/Models/cylinder.off", cylinder.getPoints(), cylinder.getTriangles());
+        }
     }
 }

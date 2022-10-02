@@ -5,19 +5,23 @@ using UnityEngine;
 public class Gen_Plane : MonoBehaviour
 {
     public Material mat;
+
+    [Range(1, 100)]
     public int width;
+
+    [Range(1, 100)]
     public int height;
+
+    [Range(1f, 100f)]
     public float pasX;
+
+    [Range(1f, 100f)]
     public float pasY;
+
     public bool debug;
 
     void Start()
     {
-        if (width <= 0 || height <= 0 || pasX <= 0 || pasY <= 0)
-        {
-            return;
-        }
-
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
@@ -35,6 +39,5 @@ public class Gen_Plane : MonoBehaviour
 
         gameObject.GetComponent<MeshFilter>().mesh = msh;
         gameObject.GetComponent<MeshRenderer>().material = mat;
-
     }
 }
