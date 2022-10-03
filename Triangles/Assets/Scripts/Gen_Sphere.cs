@@ -42,7 +42,7 @@ public class Gen_Sphere : MonoBehaviour
         if (save)
         {
             SMesh s = new SMesh();
-            s.writer("Assets/Models/sphere.off", sphere.getPoints(), sphere.getTriangles());
+            s.writer("Assets/Models/sphere.off", gameObject);
         }
     }
 }

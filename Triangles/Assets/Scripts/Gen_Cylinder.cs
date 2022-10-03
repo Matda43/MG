@@ -44,7 +44,7 @@ public class Gen_Cylinder : MonoBehaviour
         if (save)
         {
             SMesh s = new SMesh();
-            s.writer("Assets/Models/cylinder.off", cylinder.getPoints(), cylinder.getTriangles());
+            s.writer("Assets/Models/cylinder.off", gameObject);
         }
     }
 }

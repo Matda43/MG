@@ -6,6 +6,11 @@ public class Gen_Mesh : MonoBehaviour
 {
     public Material mat;
 
+    [Range(0f, 100f)]
+    public float size;
+    float remember_size;
+    public bool normals = false;
+
     public enum Skeleton
     {
         [InspectorName("Buddha")]
@@ -23,21 +28,28 @@ public class Gen_Mesh : MonoBehaviour
     };
 
     public Skeleton skeleton;
+    SMesh s;
 
     void Start()
     {
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
-        SMesh s = new SMesh();
-        s.reader("Assets/Models/" + skeleton.ToString() + ".off");
+        s = new SMesh();
+        s.chargementMaillage("Assets/Models/" + skeleton.ToString() + ".off");
+        s.traceMaillage(gameObject, mat);
+        s.calculNormalTriangles(gameObject);
 
-        Mesh msh = new Mesh();
+        remember_size = size;
+    }
 
-        msh.vertices = s.getVertices();
-        msh.triangles = s.getTriangles();
-
-        gameObject.GetComponent<MeshFilter>().mesh = msh;
-        gameObject.GetComponent<MeshRenderer>().material = mat;
+    private void Update()
+    {
+        if (remember_size != size)
+        {
+            s.resize(gameObject, size);
+            remember_size = size;
+            s.calculNormalTriangles(gameObject);
+        }
     }
 }
