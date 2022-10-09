@@ -25,7 +25,7 @@ public class Gen_Plane : MonoBehaviour
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
-        Plane plane = new Plane(new Vector3(0, 0, 0), width, height, pasX, pasY);
+        Plane plane = new Plane(new Vector3(10, 0, 0), width, height, pasX, pasY);
 
         if (debug)
         {

@@ -26,7 +26,7 @@ public class Gen_Cylinder : MonoBehaviour
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
-        Cylinder cylinder = new Cylinder(new Vector3(15, 0, 0), radius, height, pasY, nbMeridian);
+        Cylinder cylinder = new Cylinder(new Vector3(25, 0, 0), radius, height, pasY, nbMeridian);
 
         if (debug)
         {

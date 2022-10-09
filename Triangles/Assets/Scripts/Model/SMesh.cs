@@ -101,6 +101,13 @@ public class SMesh
         }
     }
 
+    Vector3 getnormal(Vector3 p1, Vector3 p2, Vector3 p3)
+    {
+        Vector3 a = p2 - p1;
+        Vector3 b = p3 - p1;
+        return Vector3.Cross(a, b).normalized;
+    }
+
     public void resize(GameObject g, float new_size)
     {
         Vector3[] new_vertices = new Vector3[vertices.Length];
@@ -119,12 +126,14 @@ public class SMesh
         {
             if (dictNormals.ContainsKey(j))
             {
-                dictNormals[j].transform.position = calculNormalTriangle(vertices[triangles[i + 0]], vertices[triangles[i + 1]], vertices[triangles[i + 2]]);
+                dictNormals[j].transform.position = calculNormalTriangle(vertices[triangles[i + 0]], vertices[triangles[i + 1]], vertices[triangles[i + 2]]) + dictNormals[j].transform.parent.position;
             }
             else
             {
+                GameObject gMesh = GameObject.Find("Mesh");
                 GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                g.transform.position = calculNormalTriangle(vertices[triangles[i + 0]], vertices[triangles[i + 1]], vertices[triangles[i + 2]]);
+                g.transform.parent = gMesh.transform;
+                g.transform.position = calculNormalTriangle(vertices[triangles[i + 0]], vertices[triangles[i + 1]], vertices[triangles[i + 2]]) + gMesh.transform.position;
                 g.transform.localScale = Vector3.one / 5;
                 dictNormals[j] = g;
             }
@@ -134,7 +143,7 @@ public class SMesh
 
     Vector3 calculNormalTriangle(Vector3 p1, Vector3 p2, Vector3 p3)
     {
-        return (p1 + p2 + p3) / 3;
+        return ((p1 + p2 + p3) / 3) + getnormal(p1, p2, p3);
     }
 
 

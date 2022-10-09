@@ -38,7 +38,10 @@ public class Gen_Mesh : MonoBehaviour
         s = new SMesh();
         s.chargementMaillage("Assets/Models/" + skeleton.ToString() + ".off");
         s.traceMaillage(gameObject, mat);
-        s.calculNormalTriangles(gameObject);
+        if (normals)
+        {
+            s.calculNormalTriangles(gameObject);
+        }
 
         remember_size = size;
     }
@@ -49,7 +52,10 @@ public class Gen_Mesh : MonoBehaviour
         {
             s.resize(gameObject, size);
             remember_size = size;
-            s.calculNormalTriangles(gameObject);
+            if (normals)
+            {
+                s.calculNormalTriangles(gameObject);
+            }
         }
     }
 }
