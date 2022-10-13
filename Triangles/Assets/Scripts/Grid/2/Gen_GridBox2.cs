@@ -29,10 +29,10 @@ public class Gen_GridBox2 : MonoBehaviour
     {
         
         this.gb = new GridBox2(getTopLeftFront(), getBottomRightBack());
-        this.gb.createGrid(this.transform.position, this.pas, this.defaultWeight);
+        this.gb.createGrid(this.transform.position, this.pas, this.defaultWeight, this.minWeight, this.maxWeight);
         foreach (GridSphere gs in spheres)
         {
-            this.gb.draw(gs, this.pas, this.minWeight, this.maxWeight);
+            this.gb.draw(gs, this.pas);
             this.centersSphereRemember.Add(gs.getCenter());
         }
         this.positionRemember = this.transform.position;
@@ -58,10 +58,10 @@ public class Gen_GridBox2 : MonoBehaviour
     {
         if (this.pasRemember != this.pas)
         {
-            this.gb.createGrid(this.transform.position, this.pas , this.defaultWeight);
+            this.gb.createGrid(this.transform.position, this.pas , this.defaultWeight, this.minWeight, this.maxWeight);
             foreach (GridSphere gs in this.spheres)
             {
-                this.gb.draw(gs, this.pas, this.minWeight, this.maxWeight);
+                this.gb.draw(gs, this.pas);
             }
             this.positionRemember = this.transform.position;
             this.pasRemember = this.pas;
@@ -72,17 +72,17 @@ public class Gen_GridBox2 : MonoBehaviour
             this.gb.changePosition(this.positionRemember, this.transform.position);
             foreach (GridSphere gs in this.spheres)
             {
-                this.gb.draw(gs, this.pas, this.minWeight, this.maxWeight);
+                this.gb.draw(gs, this.pas);
             }
             this.positionRemember = this.transform.position;
         }
 
         if (this.defaultWeightRemember != this.defaultWeight)
         {
-            this.gb.changeDefaultWeight(this.defaultWeightRemember, this.defaultWeight);
+            this.gb.changeDefaultWeight(this.defaultWeight);
             foreach (GridSphere gs in this.spheres)
             {
-                this.gb.draw(gs, this.pas, this.minWeight, this.maxWeight);
+                this.gb.draw(gs, this.pas);
             }
             this.defaultWeightRemember = defaultWeight;
         }
@@ -91,7 +91,7 @@ public class Gen_GridBox2 : MonoBehaviour
         {
             if(this.spheres[i].getCenter() != this.centersSphereRemember[i] || this.minWeightRemember != this.minWeight || this.maxWeightRemember != this.maxWeight)
             {
-                this.gb.draw(this.spheres[i], this.pas, this.minWeight, this.maxWeight);
+                this.gb.draw(this.spheres[i], this.pas);
                 this.centersSphereRemember[i] = this.spheres[i].getCenter();
                 this.minWeightRemember = this.minWeight;
                 this.maxWeightRemember = this.maxWeight;
