@@ -6,28 +6,41 @@ public class GridSphere : MonoBehaviour
 {
     public float radius;
     public float weight;
-    List<Vector3> gosPosition = new List<Vector3>();
+
+    List<Vector3> positions = new List<Vector3>();
 
     public Vector3 getCenter()
     {
         return this.transform.position;
     }
 
-    public List<Vector3> getGOPositionList()
+    public bool isInSphere(Vector3 centerCube)
     {
-        return this.gosPosition;
+        float squareX = Mathf.Pow((centerCube.x - this.getCenter().x), 2);
+        float squareY = Mathf.Pow((centerCube.y - this.getCenter().y), 2);
+        float squareZ = Mathf.Pow((centerCube.z - this.getCenter().z), 2);
+        float squareR = Mathf.Pow(radius, 2);
+        return (squareX + squareY + squareZ) - squareR < 0;
     }
 
-    public void addGOPosition(Vector3 pos)
+    public void addPositionInList(Vector3 new_position)
     {
-        if (!gosPosition.Contains(pos))
+        if (!this.positions.Contains(new_position))
         {
-            gosPosition.Add(pos);
+            this.positions.Add(new_position);
         }
     }
 
-    public void clearGOsPosition()
+    public void removePositionInList(Vector3 position)
     {
-        this.gosPosition = new List<Vector3>();
+        if (this.positions.Contains(position))
+        {
+            this.positions.Remove(position);
+        }
+    }
+
+    public List<Vector3> getListPosition()
+    {
+        return this.positions;
     }
 }

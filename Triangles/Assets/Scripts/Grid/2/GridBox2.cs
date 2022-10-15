@@ -1,20 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GridBox2
 {
     Vector3 posTopLeftFront;
     Vector3 posBottomRightBack;
     Vector3 dimensions;
+
     Dictionary<Vector3, Box2> boxes;
     Vector3 nbCubes;
+
+    Dictionary<Vector3, float> goInScene;
+    Dictionary<Vector3, GameObject> goList;
 
     public GridBox2(Vector3 posTopLeftFront, Vector3 posBottomRightBack)
     {
         this.posTopLeftFront = posTopLeftFront;
         this.posBottomRightBack = posBottomRightBack;
         this.dimensions = getDimensions();
+        this.goList = new Dictionary<Vector3, GameObject>();
     }
 
     Vector3 getDimensions()
@@ -23,7 +30,7 @@ public class GridBox2
         return new Vector3(Mathf.Abs(dimensions.x), Mathf.Abs(dimensions.y), Mathf.Abs(dimensions.z));
     }
 
-    public void createGrid(Vector3 center, float step, float defaultWeight, float minWeight, float maxWeight)
+    public void createGrid(Transform transform, float step, float defaultWeight)
     {
         this.nbCubes = new Vector3((int)(dimensions.x / step) + 1, (int)(dimensions.y / step) + 1, (int)(dimensions.z / step) + 1);
         Vector3 centerGrid = (nbCubes/2 * step);
@@ -36,32 +43,8 @@ public class GridBox2
                 for (int k = 0; k < nbCubes.z; k++)
                 {
                     Vector3 position = new Vector3(i, j, k);
-                    Vector3 realPosition = new Vector3((i + 0.5f * step) * step, (j + 0.5f * step) * step, (k + 0.5f *step) * step) - centerGrid + center;
-                    this.boxes.Add(position, new Box2(realPosition, defaultWeight, minWeight, maxWeight));
-                }
-            }
-        }
-    }
-
-    bool isInSphere(Vector3 centerSphere, float radius, Vector3 centerCube)
-    {
-        float squareX = Mathf.Pow((centerCube.x - centerSphere.x), 2);
-        float squareY = Mathf.Pow((centerCube.y - centerSphere.y), 2);
-        float squareZ = Mathf.Pow((centerCube.z - centerSphere.z), 2);
-        float squareR = Mathf.Pow(radius, 2);
-        return (squareX + squareY + squareZ) - squareR < 0;
-    }
-
-    public void changePosition(Vector3 oldCenter, Vector3 newCenter)
-    {
-        for (int i = 0; i < nbCubes.x; i++)
-        {
-            for (int j = 0; j < nbCubes.y; j++)
-            {
-                for (int k = 0; k < nbCubes.z; k++)
-                {
-                    Vector3 position = new Vector3(i, j, k);
-                    this.boxes[position].updatePosition(newCenter - oldCenter);
+                    Vector3 realPosition = new Vector3((i + 0.5f) * step, (j + 0.5f) * step, (k + 0.5f) * step) - centerGrid + transform.position;
+                    this.boxes.Add(position, new Box2(realPosition, defaultWeight));    
                 }
             }
         }
@@ -71,50 +54,71 @@ public class GridBox2
     {
         foreach (Vector3 key in boxes.Keys)
         {
-            boxes[key].updateDefaultWeight(newDefaultWeight);
+            this.boxes[key].setDefaultWeight(newDefaultWeight);
         }
     }
 
-    void deleteGameObject(GridSphere sphere)
+    public void update(GridSphere sphere)
     {
-        foreach (Vector3 v in sphere.getGOPositionList())
-        {
-            if (this.boxes.ContainsKey(v))
-            {
-                this.boxes[v].removeSphere(sphere);
-            }
-        }
-        sphere.clearGOsPosition();
-    }
-
-    void assignSphereToAPositionAndUpdateWeight(Vector3 position, GridSphere sphere)
-    {
-        if (this.boxes.ContainsKey(position))
-        {
-            bool res = this.boxes[position].addSphere(sphere);
-            if (res)
-            {
-                sphere.addGOPosition(position);
-            }
-        }
-    }
-
-    public void draw(GridSphere sphere, float step)
-    {
-        deleteGameObject(sphere);
-
+        this.goInScene = new Dictionary<Vector3, float>();
+        List<Vector3> positions = sphere.getListPosition();
+        Vector3 position;
+        bool res;
         for (int i = 0; i < nbCubes.x; i++)
         {
             for (int j = 0; j < nbCubes.y; j++)
             {
                 for (int k = 0; k < nbCubes.z; k++)
                 {
-                    Vector3 position = new Vector3(i, j, k);
-                    bool res = isInSphere(sphere.getCenter(), sphere.radius, this.boxes[position].getPosition());                 
+                    position = new Vector3(i, j, k);
+                    res = sphere.isInSphere(this.boxes[position].getPosition());
                     if (res)
                     {
-                        assignSphereToAPositionAndUpdateWeight(position, sphere);
+                        if (!positions.Contains(position))
+                        {
+                            this.boxes[position].addSphere(sphere);
+                            sphere.addPositionInList(position);
+                            this.goInScene.Add(this.boxes[position].getPosition(), this.boxes[position].getWeight());
+                        }
                     }
+                    else
+                    {
+                        if (positions.Contains(position))
+                        {
+                            this.boxes[position].removeSphere(sphere);
+                            sphere.removePositionInList(position);
+                            this.goInScene.Add(this.boxes[position].getPosition(), this.boxes[position].getWeight());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public void draw(float minWeight, float maxWeight, Transform transform)
+    {
+        foreach(var item in goInScene)
+        {
+
+            float weight = item.Value;
+
+            if (goList.ContainsKey(item.Key))
+            {
+                if (minWeight > weight || weight > maxWeight)
+                {
+                    GameObject.Destroy(goList[item.Key]);
+                    goList.Remove(item.Key);
+                }
+            }            
+            else
+            {
+                if (weight >= minWeight && weight <= maxWeight)
+                {
+                    GameObject go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    go.transform.parent = transform;
+                    go.transform.position = item.Key;
+                    go.transform.localScale = Vector3.one;
+                    goList.Add(item.Key, go);
                 }
             }
         }

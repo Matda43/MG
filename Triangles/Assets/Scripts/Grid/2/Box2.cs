@@ -1,106 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Box2
 {
     Vector3 position;
-    GameObject g = null;
+
     float defaultWeight;
-    List<GridSphere> spheres;
     float weight;
 
-    float minWeight;
-    float maxWeight;
+    Dictionary<int, float> spheres;
 
-    public Box2(Vector3 position, float defaultWeight, float minWeight, float maxWeight)
+    public Box2(Vector3 position, float defaultWeight)
     {
         this.position = position;
+        
         this.defaultWeight = defaultWeight;
         this.weight = defaultWeight;
-        this.spheres = new List<GridSphere>();
-        this.minWeight = minWeight;
-        this.maxWeight = maxWeight;
+
+        this.spheres = new Dictionary<int, float>();
     }
 
-    public void updatePosition(Vector3 new_position)
+    public void setDefaultWeight(float new_defaultWeight)
     {
-        this.position += new_position;
-    }
-
-    public void updateDefaultWeight(float new_defaultWeight)
-    {
-        this.weight += (new_defaultWeight - this.defaultWeight);
+        this.weight -= this.defaultWeight;
         this.defaultWeight = new_defaultWeight;
+        this.weight += this.defaultWeight;
     }
 
 
-    public bool addSphere(GridSphere sphere)
+    public void addSphere(GridSphere sphere)
     {
-        if (!this.spheres.Contains(sphere))
+        int key = sphere.GetInstanceID();
+        if (!this.spheres.ContainsKey(key))
         {
-            this.spheres.Add(sphere);
-            this.weight += sphere.weight;
-            if (this.weight > maxWeight)
-            {
-                if (g != null)
-                {
-                    GameObject.Destroy(g);
-                    g = null;
-                }
-            }
-            else
-            {
-                if (g == null)
-                {
-                    GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    g.transform.parent = sphere.transform;
-                    g.transform.position = this.position;
-                    g.transform.localScale = Vector3.one;
-                }
-            }
-            return true;
+            this.spheres.Add(key, sphere.weight);
+            this.weight += spheres[key];
         }
-        return false;
     }
 
     public void removeSphere(GridSphere sphere)
     {
-        bool res = this.spheres.Remove(sphere);
-        if (res)
+        int key = sphere.GetInstanceID();
+        if (this.spheres.ContainsKey(key))
         {
-            this.weight -= sphere.weight;
-            if (this.weight < this.minWeight)
-            {
-                if (g != null)
-                {
-                    GameObject.Destroy(g);
-                    g = null;
-                }
-            }
-            else
-            {
-                if(g == null)
-                {
-                    GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cube);
-                    g.transform.parent = sphere.transform;
-                    g.transform.position = this.position;
-                    g.transform.localScale = Vector3.one;
-                }
-            }
+            this.weight -= spheres[key];
+            this.spheres.Remove(key);
         }
     }
-
-    public void incWeight(float w)
-    {
-        this.weight += w;
-    }
-
-    public void decWeight(float w)
-    {
-        this.weight -= w;
-    }
-
+  
     public float getWeight()
     {
         return this.weight;
