@@ -42,18 +42,24 @@ public class Gen_Simplification : MonoBehaviour
         gs.changePositionAndResize(this.transform, gameObject);
 
         gs.createGrid(gameObject.GetComponent<MeshFilter>().mesh.vertices, this.transform, simplification);
-        remember_simplification = simplification;
-
         gs.simplification(gameObject);
+        remember_simplification = simplification;
     }
 
     private void Update()
     {
         if (remember_simplification != simplification)
         {
-            gs.createGrid(gameObject.GetComponent<MeshFilter>().mesh.vertices, this.transform, simplification);
-            gs.simplification(gameObject);
-            remember_simplification = simplification;
+            if (simplification != remember_simplification)
+            {
+                gameObject.GetComponent<MeshFilter>().mesh.vertices = s.getVertices();
+                gameObject.GetComponent<MeshFilter>().mesh.triangles = s.getTriangles();
+                gs.changePositionAndResize(this.transform, gameObject);
+
+                gs.createGrid(gameObject.GetComponent<MeshFilter>().mesh.vertices, this.transform, simplification);
+                gs.simplification(gameObject);
+                remember_simplification = simplification;
+            }
         }
     }
 }

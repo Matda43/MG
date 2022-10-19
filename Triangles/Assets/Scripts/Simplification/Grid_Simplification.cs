@@ -28,13 +28,6 @@ public class Grid_Simplification
 
         this.cubes = new Dictionary<Vector3, Cube_Simplification>();
 
-        GameObject g = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        g.transform.position = this.posTopLeftFront;
-
-        GameObject g1 = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        g1.transform.position = this.posBottomRightBack;
-
-
         for (int i = 0; i < nbCubes.x; i++)
         {
             for (int j = 0; j < nbCubes.y; j++)
