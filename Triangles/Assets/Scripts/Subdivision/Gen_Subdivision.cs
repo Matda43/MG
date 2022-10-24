@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(LineRenderer))]
 public class Gen_Subdivision : MonoBehaviour
 {
     public Material mat;
@@ -16,24 +17,6 @@ public class Gen_Subdivision : MonoBehaviour
 
     LineRenderer lineRenderer;
 
-    public enum Skeleton
-    {
-        [InspectorName("Buddha")]
-        buddha,
-        [InspectorName("Bunny")]
-        bunny,
-        [InspectorName("Cube")]
-        cube,
-        [InspectorName("Max")]
-        max,
-        [InspectorName("Plan")]
-        plan,
-        [InspectorName("Triceratops")]
-        triceratops
-    };
-
-    public Skeleton skeleton;
-    SMesh s;
     Subdivision sub;
     List<Vector3> list;
     List<Vector3> subList;
@@ -43,18 +26,13 @@ public class Gen_Subdivision : MonoBehaviour
         gameObject.AddComponent<MeshFilter>();
         gameObject.AddComponent<MeshRenderer>();
 
-        s = new SMesh();
-        s.chargementMaillage("Assets/Models/" + skeleton.ToString() + ".off");
-
-        //s.traceMaillage(gameObject, mat);
-
         sub = new Subdivision();
 
         lineRenderer = GetComponent<LineRenderer>();
         lineRenderer.startWidth = 0.1f;
         lineRenderer.endWidth = 0.1f;
 
-        list = new List<Vector3>() { new Vector3(0, 0, 0), new Vector3(0, 10, 10), new Vector3(10, 10, -10), new Vector3(10, -5, 5), new Vector3(0,0,0) };
+        list = new List<Vector3>() { new Vector3(-30, 0, 0), new Vector3(-30, 10, 10), new Vector3(-20, 10, -10), new Vector3(-20, -5, 5), new Vector3(-30,0,0) };
 
         subList = sub.subdivide(list, (1-ratio), ratio);
         lineRenderer.positionCount = subList.Count;

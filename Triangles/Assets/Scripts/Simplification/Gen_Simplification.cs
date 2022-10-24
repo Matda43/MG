@@ -6,7 +6,7 @@ public class Gen_Simplification : MonoBehaviour
 {
     public Material mat;
 
-    [Range(0.5f, 10f)]
+    [Range(1f, 10f)]
     public float simplification;
     float remember_simplification;
 
