@@ -1,1 +1,1 @@
-# MG-Triangles
+# Modélisation géométrique
