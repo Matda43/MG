@@ -4,18 +4,13 @@ using UnityEngine;
 
 public class Bernstein
 {
-    public float B(int i, int n, float u)
+    public float B(int i, int n, float t)
     {
-        return (factorial(n) / (factorial(i) * factorial(n - 1))) * Mathf.Pow(u, i) * Mathf.Pow((1 - u), (n - 1));
+        return (factorial(n) / (factorial(i) * factorial(n - i))) * Mathf.Pow(t, i) * Mathf.Pow((1 - t), (n - i));
     }
 
     float factorial(int n)
     {
-        float fact = 1;
-        for (int x = 1; x <= n; x++)
-        {
-            fact *= x;
-        }
-        return fact;
+        return n > 1 ? n * factorial(n - 1) : 1;
     }
 }
